@@ -35,14 +35,36 @@ function hasOwnProp(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-function getEntry(translations, keys) {
-  return keys.reduce(function(result, key) {
-    if (isPlainObject(result) && hasOwnProp(result, key)) {
-      return result[key];
-    } else {
-      return null;
+function getPropCaseInsensitive(Obj,key){
+    for (let prop in Obj){
+        if (prop.toLowerCase() === key.toLowerCase()) {
+            return Obj[prop];
+        }
     }
-  }, translations);
+}
+
+function hasPropCaseInsensitive(Obj,key){
+    var retValue = false;
+    if(Obj === Object(Obj)){
+        for (let prop in Obj){
+            if (prop.toLowerCase() === key.toLowerCase()) {
+                retValue = true;
+            }
+        }
+    }
+    return retValue;
+}
+
+function getEntry(translations, keys) {
+    return keys.reduce(function(result, key) {
+        if (isPlainObject(result) && hasOwnProp(result, key)) {
+            return result[key];
+        } else if (hasPropCaseInsensitive(result,key)){
+            return getPropCaseInsensitive(result,key);
+        } else {
+            return null;
+        }
+    }, translations);
 }
 
 function Counterpart() {
