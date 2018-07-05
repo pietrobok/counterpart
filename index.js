@@ -55,11 +55,11 @@ function hasPropCaseInsensitive(Obj,key){
     return retValue;
 }
 
-function getEntry(translations, keys) {
-    return keys.reduce(function(result, key) {
+function getEntry(translations, keys, caseSensitive) {
+  return keys.reduce(function(result, key) {
         if (isPlainObject(result) && hasOwnProp(result, key)) {
             return result[key];
-        } else if (hasPropCaseInsensitive(result,key)){
+        } else if (caseSensitive === false && hasPropCaseInsensitive(result,key)){
             return getPropCaseInsensitive(result,key);
         } else {
             return null;
@@ -81,7 +81,8 @@ function Counterpart() {
     separator: '.',
     keepTrailingDot: false,
     keyTransformer: function(key) { return key; },
-    generateMissingEntry: function(key) { return 'missing translation: ' + key; }
+    generateMissingEntry: function(key) { return 'missing translation: ' + key; },
+    keysCaseSensitive: true
   };
 
   this.registerTranslations('en', require('./locales/en'));
@@ -234,7 +235,7 @@ Counterpart.prototype.translate = function(key, options) {
 
   var keys = this._normalizeKeys(locale, scope, key, separator);
 
-  var entry = getEntry(this._registry.translations, keys);
+  var entry = getEntry(this._registry.translations, keys, options.keysCaseSensitive);
 
   if (entry === null) {
     this.emit('translationnotfound', locale, key, options.fallback, scope);
@@ -248,7 +249,7 @@ Counterpart.prototype.translate = function(key, options) {
     for (var i = 0, ii = fallbackLocales.length; i < ii; i++) {
       var fallbackLocale = fallbackLocales[i];
       var fallbackKeys = this._normalizeKeys(fallbackLocale, scope, key, separator);
-      entry = getEntry(this._registry.translations, fallbackKeys);
+      entry = getEntry(this._registry.translations, fallbackKeys, options.keysCaseSensitive);
 
       if (entry) {
         locale = fallbackLocale;
