@@ -36,7 +36,7 @@ function hasOwnProp(obj, key) {
 }
 
 function getPropCaseInsensitive(Obj,key){
-    for (let prop in Obj){
+    for (var prop in Obj){
         if (prop.toLowerCase() === key.toLowerCase()) {
             return Obj[prop];
         }
@@ -46,7 +46,7 @@ function getPropCaseInsensitive(Obj,key){
 function hasPropCaseInsensitive(Obj,key){
     var retValue = false;
     if(Obj === Object(Obj)){
-        for (let prop in Obj){
+        for (var prop in Obj){
             if (prop.toLowerCase() === key.toLowerCase()) {
                 retValue = true;
             }
